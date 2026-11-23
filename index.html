@@ -536,6 +536,63 @@
       font-size: .84rem;
     }
 
+    .compare {
+      padding-block: 70px;
+      border-block: 1px solid var(--line);
+      background: var(--card);
+    }
+
+    .compare .section-heading { margin-bottom: 24px; }
+
+    .compare-panel {
+      padding: clamp(14px, 3vw, 24px);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--background);
+    }
+
+    .compare-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .compare-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .compare-table th, .compare-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .compare-table thead th {
+      color: var(--yellow);
+      font-family: var(--heading);
+      font-size: 1.2rem;
+    }
+
+    .compare-table thead th:first-child {
+      width: 25%;
+      color: var(--muted);
+      font-family: var(--body);
+      font-size: .75rem;
+    }
+
+    .compare-table tbody th {
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 600;
+    }
+
+    .compare-table td { font-size: .88rem; overflow-wrap: anywhere; }
+    .compare-table td.is-cheapest { color: var(--yellow); font-weight: 700; }
+    .compare-table tr:last-child th, .compare-table tr:last-child td { border-bottom: 0; }
+
     .calculator {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -685,6 +742,11 @@
       .featured-info { padding: 24px; }
       .featured-info h3 { font-size: 2.5rem; }
       .section { padding-block: 55px; }
+      .compare { padding-block: 55px; }
+      .compare-controls { grid-template-columns: 1fr; }
+      .compare-table th, .compare-table td { padding: 10px 6px; }
+      .compare-table td { font-size: .74rem; }
+      .compare-table thead th { font-size: 1rem; }
       .section-heading { display: block; margin-bottom: 25px; }
       .section-heading > p { margin-top: 12px; }
       .car-grid { gap: 11px; }
@@ -869,6 +931,61 @@
       </div>
     </section>
 
+    <section class="compare" id="compare" aria-labelledby="compare-title">
+      <div class="wrap">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Side by side</p>
+            <h2 id="compare-title">Compare Cars</h2>
+          </div>
+          <p>Choose two cars to compare the details that matter.</p>
+        </div>
+        <div class="compare-panel">
+          <div class="compare-controls">
+            <div class="field">
+              <label for="compare-car-one">First car</label>
+              <select id="compare-car-one"></select>
+            </div>
+            <div class="field">
+              <label for="compare-car-two">Second car</label>
+              <select id="compare-car-two"></select>
+            </div>
+          </div>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th scope="col">Details</th>
+                <th id="compare-first-name" scope="col">First car</th>
+                <th id="compare-second-name" scope="col">Second car</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Year</th>
+                <td id="compare-first-year">—</td>
+                <td id="compare-second-year">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Mileage</th>
+                <td id="compare-first-mileage">—</td>
+                <td id="compare-second-mileage">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Transmission</th>
+                <td id="compare-first-transmission">—</td>
+                <td id="compare-second-transmission">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Price</th>
+                <td id="compare-first-price">—</td>
+                <td id="compare-second-price">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section class="why" aria-labelledby="why-title">
       <div class="wrap">
         <div class="section-heading">
@@ -1002,6 +1119,56 @@
       field.addEventListener("change", updateEstimate);
     });
     updateEstimate();
+
+    const comparisonCars = [
+      { name: "Suzuki Alto", year: 2019, mileage: 45000, transmission: "Manual", price: 2250000 },
+      { name: "Kia Picanto", year: 2020, mileage: 38000, transmission: "Auto", price: 3100000 },
+      { name: "Suzuki Swift", year: 2021, mileage: 29000, transmission: "Auto", price: 3850000 },
+      { name: "Toyota Corolla", year: 2019, mileage: 52000, transmission: "Auto", price: 4900000 },
+      { name: "Honda City", year: 2020, mileage: 41000, transmission: "Auto", price: 4650000 },
+      { name: "Honda Civic Oriel", year: 2020, mileage: 38000, transmission: "Automatic", price: 5850000 },
+      { name: "Honda Civic", year: 2018, mileage: 60000, transmission: "Auto", price: 5700000 },
+      { name: "Kia Sportage", year: 2020, mileage: 48000, transmission: "Auto", price: 7200000 },
+      { name: "Hyundai Tucson", year: 2021, mileage: 35000, transmission: "Auto", price: 7850000 }
+    ];
+    const comparisonSelects = [
+      document.querySelector("#compare-car-one"),
+      document.querySelector("#compare-car-two")
+    ];
+
+    comparisonCars.forEach((car, index) => {
+      comparisonSelects.forEach((select) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = `${car.name} — ${car.year}`;
+        select.append(option);
+      });
+    });
+    comparisonSelects[0].value = "0";
+    comparisonSelects[1].value = "1";
+
+    function updateComparison() {
+      const cars = comparisonSelects.map((select) => comparisonCars[Number(select.value)]);
+
+      ["year", "mileage", "transmission", "price"].forEach((field) => {
+        cars.forEach((car, index) => {
+          const value = field === "price"
+            ? formatRupees(car.price)
+            : field === "mileage"
+              ? `${car.mileage.toLocaleString("en-PK")} km`
+              : car[field];
+          document.querySelector(`#compare-${index === 0 ? "first" : "second"}-${field}`).textContent = value;
+        });
+      });
+
+      document.querySelector("#compare-first-name").textContent = cars[0].name;
+      document.querySelector("#compare-second-name").textContent = cars[1].name;
+      document.querySelector("#compare-first-price").classList.toggle("is-cheapest", cars[0].price < cars[1].price);
+      document.querySelector("#compare-second-price").classList.toggle("is-cheapest", cars[1].price < cars[0].price);
+    }
+
+    comparisonSelects.forEach((select) => select.addEventListener("change", updateComparison));
+    updateComparison();
 
     const bookingForm = document.querySelector("#booking-form");
     const phoneInput = document.querySelector("#customer-phone");
